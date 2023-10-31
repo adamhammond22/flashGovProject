@@ -25,3 +25,4 @@ Eslint is a very popular formatting tool. It will help us conform to a coding st
 There will be an eslint config for each side of the codebase.
 Let's say I wanna check all .ts in my local directory:
 "npx eslint . --ext .ts" or "npm run lint"
+NOTE: I suspect eslint is broken here. The VSCode eslint is producing correct errors, but the lint commands only detect unused variables. They don't even detect undefined variables.
