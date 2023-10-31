@@ -40,3 +40,6 @@ Used to create endpoints for our servers.
 
 Morgan:
 Logging tool for our server
+
+HTTP-errors:
+Package for creating easy http errors
