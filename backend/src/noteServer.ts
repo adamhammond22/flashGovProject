@@ -1,5 +1,5 @@
-/* ==================================== app.ts ==================================== */
-// This will define out express endpoints for our server
+/* ==================================== noteServer.ts ==================================== */
+// This will define out express endpoints for our dummy note server
 
 import "dotenv/config"; // Import a sanitized environment file. This holds our sensitive info
 import express, { NextFunction, Request, Response } from "express"; //Express for hosting a server
