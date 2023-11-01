@@ -84,3 +84,84 @@ export const createNote: RequestHandler<unknown, unknown, CreateNoteBody, unknow
     }
     
 };
+
+// Interface for our expected update note body
+interface UpdateNodeBody {
+    title?: string,
+    text?: string,
+}
+
+// Interface for our expected update note params
+// It's not optional because we literally couldn't hit the updateNote endpoint without a nodeId in the request
+interface UpdateNodeParams {
+    noteId: string
+}
+
+// Interfaces are needed because the type declaration is all or nothing. We need to specify the exact type or else it can be ANYTHING
+// 2nd is response body, 4th is url params. Both are unneeded and will be left unknown
+export const updateNote: RequestHandler<UpdateNodeParams, unknown, UpdateNodeBody, unknown> =async (req, res, next) => {
+    const noteId = req.params.noteId;
+    const newTitle = req.body.title;
+    const newText = req.body.text;
+    
+    try {
+
+        // Make sure noteId adheres to the type mongoose expects.
+        if(!mongoose.isValidObjectId(noteId)){
+            throw createHttpError(400, "Invalid Note ID");
+        }
+
+        // Check if title was actually passed
+        if(!newTitle) {
+            throw createHttpError(400, "Updated Note must have a title");
+        }
+
+        // Now query for the note id and wait
+        const note = await NoteModel.findById(noteId).exec();
+
+        // throw error if note is not found
+        if(!note) {
+            throw createHttpError(404, "Note not found");
+        }
+        
+        note.title = newTitle;
+        note.text = newText;
+
+        // Use mongoose save method, and await response
+        const updatedNote = await note.save(); 
+
+        res.status(200).json(updatedNote);
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+// Delete endpoint
+export const deleteNode: RequestHandler = async (req, res, next) => {
+    // Get the noteId from the params
+    const noteId = req.params.noteId;
+
+    try {
+
+        // Make sure noteId adheres to the type mongoose expects.
+        if(!mongoose.isValidObjectId(noteId)){
+            throw createHttpError(400, "Invalid Note ID");
+        }
+
+        // I love mongoose functions, but this one needs a .exec for some reason?
+        const note = await NoteModel.findByIdAndDelete(noteId).exec();
+
+        // throw error if note is not found
+        if(!note) {
+            throw createHttpError(404, "Note not found");
+        }
+
+        // Sendstatus because we don't need to give a json body
+        res.sendStatus(204);
+
+    } catch (error) {
+        next(error);
+    }
+}

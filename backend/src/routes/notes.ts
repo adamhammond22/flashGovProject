@@ -16,7 +16,13 @@ router.get("/", NotesController.getNotes);
 // the :noteId will read anything after the slash as the noteId, which we will use to find the note
 router.get("/:noteId", NotesController.getNote);
 
-/* Dummy http post endpoint for a get request */
+/* Dummy http post endpoint to create a note */
 router.post("/", NotesController.createNote);
+
+/* Dummy http patch endpoint to change a note */
+router.patch("/:noteId", NotesController.updateNote);
+
+/* Dummy http delete endpoint to remove a note */
+router.delete("/:noteId", NotesController.deleteNode);
 
 export default router;
