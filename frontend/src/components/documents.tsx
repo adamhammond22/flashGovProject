@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import '../App.css';
 import DocumentCard from './documentCard';
-import Searchbar from './searchbar';
-import FilterPanel from './filterpanel';
+import SearchBar from './searchBar';
+import FilterPanel from './filterPanel';
 
 function Documents() {
 
@@ -45,8 +45,8 @@ function Documents() {
 
     return (
       <div className='documents'>
-        <Searchbar toggleFilter={toggleFilterCallback} />
-
+        <SearchBar toggleFilter={toggleFilterCallback} />
+      
         {/* If the filter panel is toggled display the following*/}
         {openFilter && 
           <FilterPanel specDate={specDate} keywords={keyWords}
