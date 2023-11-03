@@ -10,22 +10,43 @@ function Documents() {
     const [specDate,toggleSpecDate] = useState(false);
     const [keyWords, setKeywords]:any = useState([]);
     const [currentWord,setWord] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
 
+    // Passed into Searchbar component to open or close filter panel
     const toggleFilterCallback = () => {
       setWord("");
       toggleFilter(!openFilter);
     }
 
+    // Passed into filterpanel component to toggle specific date
     const toggleSpecDateCallback = () => {
       toggleSpecDate(!specDate);
     }
-
+    
+    // Passed into FilterPanel to handle text input changes for keyword
     const setCurrentWordCallback = (e:any) => {
       setWord(e.target.value);
     }
 
+    // Passed into Filterpanel to add a new keyword
     const pushKeywordCallback = () => {
       if (currentWord) setKeywords([...keyWords, currentWord]);
+    }
+
+    // Passed into Filterpanel to remove a keyword
+    const removeWordCallback = (index:any) => {
+      setKeywords(keyWords.filter((keyword: string,i:number) => index !== i));
+    }
+    
+    // Passed into filterpanel to handle startDate changes
+    const setStartDateCallback = (e:any) => {
+      setStartDate(e.target.value);
+    }
+    
+    //Passed into Filterpanel to handel endDate Change
+    const setEndDateCallback = (e:any) => {
+      setEndDate(e.target.value);
     }
 
     const documentData:any[] = [
@@ -43,6 +64,9 @@ function Documents() {
       },
     ]
 
+    // To Remove, Just adding here to avoid unused variables
+    console.log(startDate,endDate);
+
     return (
       <div className='documents'>
         <Searchbar toggleFilter={toggleFilterCallback} />
@@ -51,7 +75,9 @@ function Documents() {
         {openFilter && 
           <FilterPanel specDate={specDate} keywords={keyWords}
            addKeyword={pushKeywordCallback} toggleFilter={toggleFilterCallback}
-            toggleSpecDate={toggleSpecDateCallback} setWord={setCurrentWordCallback} currentWord={currentWord}
+            toggleSpecDate={toggleSpecDateCallback} setWord={setCurrentWordCallback} 
+            currentWord={currentWord} removeItem={removeWordCallback}
+            setStartDate={setStartDateCallback} setEndDate={setEndDateCallback}
             />          
         }
 
