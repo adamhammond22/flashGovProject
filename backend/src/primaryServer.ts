@@ -4,7 +4,7 @@
 
 import "dotenv/config"; // Import a sanitized environment file. This holds our sensitive info
 import express, { NextFunction, Request, Response } from "express"; //Express for hosting a server
-import documentsRoutes from "./routes/documentRouter" //import the router for our dummy "notes" endpoints
+import speechesRoutes from "./routes/speechesRouter" //import the router for our dummy "notes" endpoints
 import morgan from "morgan"; //import our server logger utility
 import createHttpError, { isHttpError } from "http-errors";
 
@@ -19,9 +19,9 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 
-// ======== Document Endpoint Router ======== //
-// Forward anything that goes to "/api/documents", towards our document router
-app.use("/api/documents", documentsRoutes);
+// ======== Speeches Endpoint Router ======== //
+// Forward anything that goes to "/api/speeches", towards our document router
+app.use("/api/speeches", speechesRoutes);
 
 
 // ======== Endpoint Missing Middleware ======== //
