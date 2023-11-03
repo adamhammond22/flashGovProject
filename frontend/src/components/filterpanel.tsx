@@ -18,7 +18,7 @@ function FilterPanel(props:{specDate:boolean,toggleFilter:any,toggleSpecDate:any
                 </div>
                 <div className='range-inputs'>
                   <div>
-                    <h3>From</h3>
+                    <h3>{props.specDate ? "Date" : "From"}</h3>
                     <input type="date"/>
                   </div>
                   {!props.specDate && 
