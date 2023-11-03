@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../App.css';
 import DocumentCard from './documentCard';
 import Searchbar from './searchbar';
 import FilterPanel from './filterpanel';
+// Import speech obj interfaces
+import { Speech } from '../models/speechInterface';
 
 function Documents() {
 
@@ -10,6 +12,24 @@ function Documents() {
     const [specDate,toggleSpecDate] = useState(false);
     const [keyWords, setKeywords]:any = useState([]);
     const [currentWord,setWord] = useState("");
+    /* State of loaded speeches */
+    const [loadedSpeeches, setLoadedSpeeches] = useState<Speech[]>([]);
+
+    useEffect(()=>{
+      async function loadSpeeches(){
+        try {
+          // Query Server for speeches
+          const response = await fetch("http://localhost:5000/api/speeches", {method:"GET"});
+          const returnedSpeeches = await response.json();
+          setLoadedSpeeches(returnedSpeeches);
+          console.log("speeches:", loadedSpeeches)
+        } catch (error) {
+          console.error(error);
+          alert(error);
+        }
+      }
+      loadSpeeches();
+    }, []);
 
     const toggleFilterCallback = () => {
       setWord("");
