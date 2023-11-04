@@ -49,6 +49,7 @@ function Documents() {
       if (currentWord) setKeywords([...keyWords, currentWord]);
     }
     
+    /*
     const documentData:any[] = [
       {
         title: "H. Con. Res. 1 (Engrossed in House) - Regarding consent to assemble outside the seat of government.",
@@ -63,6 +64,7 @@ function Documents() {
         speaker: "Jonathan"
       },
     ]
+    */
 
     return (
       <div className='documents'>
@@ -78,7 +80,7 @@ function Documents() {
 
         {/* Displays all the document date */}
         <div className='document-container'>
-          {!documentData.length && <h2>No Results</h2>}
+          {!loadedSpeeches.length && <h2>No Results</h2>}
           {loadedSpeeches.map((document,index) => (<DocumentCard key={index} title={document.title} date={new Date(document.date).toLocaleDateString("en-us", {year:"numeric", month: "long", day: "numeric"})} summary={document.summary ? document.summary! : ""} speaker={document.speaker}/>))}
         </div>
 
