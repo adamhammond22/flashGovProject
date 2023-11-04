@@ -43,8 +43,12 @@
 
 hr {width:100%}
 
+button:hover {
+  background-color: #1f0aa991 !important; 
+} 
+
 .filter-button button:hover {
-  background-color: transparent;
+  background-color: transparent  !important;;
 }
 
 .filter-button img {
@@ -54,10 +58,6 @@ hr {width:100%}
 .filter-button img:hover {
   filter: brightness(0%)
 }
-
-button:hover {
-  background-color: #1f0aa991; 
-} 
 
 span:nth-of-type(1){ 
   color: var(--secondary-blue);
@@ -96,7 +96,7 @@ span:nth-of-type(2){
 .search-bar > button {
   top: 10px;
   right: 0px;
-  width: 25%;
+  width: 10%;
   background-color: var(--secondary-blue);
   color: white;
   border: 1px solid var(--border-gray);
