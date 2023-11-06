@@ -1,4 +1,6 @@
-function FilterPanel(props:{specDate:boolean,toggleFilter:any,toggleSpecDate:any,addKeyword:any,keywords:string[],currentWord:string,setWord:any}) {
+function FilterPanel(props:{specDate:boolean,toggleFilter:any,toggleSpecDate:any,
+    addKeyword:any,keywords:string[],currentWord:string,setWord:any,removeItem:any
+    setStartDate:any,setEndDate:any}) {
     return (
         <div className='filter-panel-overlay'>
             {/* filter-panel is the main filter screen users interact with */}
@@ -18,13 +20,13 @@ function FilterPanel(props:{specDate:boolean,toggleFilter:any,toggleSpecDate:any
                 </div>
                 <div className='range-inputs'>
                   <div>
-                    <h3>{props.specDate ? "Date" : "From"}</h3>
-                    <input type="date"/>
+                    <h3>From</h3>
+                    <input onChange={props.setStartDate} type="date"/>
                   </div>
                   {!props.specDate && 
                     <div>
                       <h3>To</h3>
-                      <input type="date"/>
+                      <input onChange={props.setEndDate} type="date"/>
                     </div>
                   }
                 </div>
@@ -39,7 +41,7 @@ function FilterPanel(props:{specDate:boolean,toggleFilter:any,toggleSpecDate:any
                   <button onClick={props.addKeyword}>Add</button>
                 </div>
                 <div className="keywords-container">
-                    {props.keywords.map((keyword,index) => <p key={index}>{keyword}</p>)}
+                    {props.keywords.map((keyword,index) => <button onClick={() => props.removeItem(index)} key={index}>{keyword}</button>)}
                 </div>
               </div>
             </div>
