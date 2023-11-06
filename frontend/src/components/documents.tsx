@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import '../App.css';
 import DocumentCard from './documentCard';
-import SearchBar from './searchBar';
-import FilterPanel from './filterPanel';
+import SearchBar from './searchbar';
+import FilterPanel from './filterpanel';
 // Import speech obj interfaces
 import { Speech } from '../models/speechInterface';
 
