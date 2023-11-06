@@ -56,7 +56,10 @@ function Documents() {
     const pushKeywordCallback = () => {
       if (currentWord) setKeywords([...keyWords, currentWord]);
     }
-    
+
+    const performSearch = () => {
+      console.log("searching")
+    }
     
 
     // Passed into Filterpanel to remove a keyword
@@ -79,7 +82,7 @@ function Documents() {
 
     return (
       <div className='documents'>
-        <SearchBar toggleFilter={toggleFilterCallback} />
+        <SearchBar toggleFilter={toggleFilterCallback} searchCallback={performSearch} />
       
         {/* If the filter panel is toggled display the following*/}
         {openFilter && 

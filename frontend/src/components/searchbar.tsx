@@ -1,6 +1,6 @@
 import filter from "../assets/filter-edit.png";
 
-function SearchBar(props:{toggleFilter:any}){
+function SearchBar(props:{toggleFilter:any, searchCallback:any}){
 
     return (
         <div className="search-bar">
@@ -8,7 +8,7 @@ function SearchBar(props:{toggleFilter:any}){
             <div className="filter-button">
                 <button><img onClick={props.toggleFilter} src={filter} alt=""/></button>
             </div>
-            <button style={{ marginLeft: '30px', padding:'10px'}}>
+            <button onClick={props.searchCallback} style={{ marginLeft: '30px', padding:'10px'}}>
                 Search
             </button>
         </div>
