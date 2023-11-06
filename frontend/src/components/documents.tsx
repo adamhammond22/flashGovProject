@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../App.css';
 import DocumentCard from './documentCard';
-import Searchbar from './searchbar';
+import SearchBar from './searchbar';
 import FilterPanel from './filterpanel';
+// Import speech obj interfaces
+import { Speech } from '../models/speechInterface';
 
 function Documents() {
 
@@ -12,6 +14,27 @@ function Documents() {
     const [currentWord,setWord] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+  
+    /* State of loaded speeches */
+    const [loadedSpeeches, setLoadedSpeeches] = useState<Speech[]>([]);
+
+    useEffect(()=>{
+      async function loadSpeeches(){
+        try {
+          // Query Server for speeches
+          // Able to leave out the localhost/5000 portion because of proxy in package.json
+          const response = await fetch("/api/speeches", {method:"GET"});
+          const returnedSpeeches = await response.json();
+          setLoadedSpeeches(returnedSpeeches);
+        } catch (error) {
+          console.error(error);
+          alert(error);
+        }
+      }
+      loadSpeeches();
+    }, []);
+
+
 
     // Passed into Searchbar component to open or close filter panel
     const toggleFilterCallback = () => {
@@ -33,6 +56,8 @@ function Documents() {
     const pushKeywordCallback = () => {
       if (currentWord) setKeywords([...keyWords, currentWord]);
     }
+    
+    
 
     // Passed into Filterpanel to remove a keyword
     const removeWordCallback = (index:any) => {
@@ -49,28 +74,13 @@ function Documents() {
       setEndDate(e.target.value);
     }
 
-    const documentData:any[] = [
-      {
-        title: "H. Con. Res. 1 (Engrossed in House) - Regarding consent to assemble outside the seat of government.",
-        date: "January 21, 2023",
-        summary: "I made this up",
-        speaker: "Jonathan"
-      },
-      {
-        title: "Dummy document",
-        date: "August 28, 2023",
-        summary: "I made this up",
-        speaker: "Jonathan"
-      },
-    ]
-
     // To Remove, Just adding here to avoid unused variables
     console.log(startDate,endDate);
 
     return (
       <div className='documents'>
-        <Searchbar toggleFilter={toggleFilterCallback} />
-
+        <SearchBar toggleFilter={toggleFilterCallback} />
+      
         {/* If the filter panel is toggled display the following*/}
         {openFilter && 
           <FilterPanel specDate={specDate} keywords={keyWords}
@@ -83,8 +93,8 @@ function Documents() {
 
         {/* Displays all the document date */}
         <div className='document-container'>
-          {!documentData.length && <h2>No Results</h2>}
-          {documentData.map((document,index) => (<DocumentCard key={index} title={document.title} date={document.date} summary={document.summary} speaker={document.speaker}/>))}
+          {!loadedSpeeches.length && <h2>No Results</h2>}
+          {loadedSpeeches.map((document,index) => (<DocumentCard key={index} title={document.title} date={new Date(document.date).toLocaleDateString("en-us", {year:"numeric", month: "long", day: "numeric"})} summary={document.summary ? document.summary! : ""} speaker={document.speaker}/>))}
         </div>
 
       </div>

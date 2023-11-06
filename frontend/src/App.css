@@ -43,9 +43,20 @@
 
 hr {width:100%}
 
-
 button:hover {
-  background-color: #1f0aa991 !important;
+  background-color: #1f0aa991 !important; 
+} 
+
+.filter-button button:hover {
+  background-color: transparent  !important;;
+}
+
+.filter-button img {
+  filter: brightness(150%)
+}
+
+.filter-button img:hover {
+  filter: brightness(0%)
 }
 
 span:nth-of-type(1){ 
@@ -61,13 +72,13 @@ span:nth-of-type(2){
   align-items: flex-start;
 }
 
-.searchbar {
+.search-bar {
   display: flex;
   width: 100%;
   align-items: center;
 }
 
-.searchbar>input {
+.search-bar>input {
   width: 60%;
   height: 40px;
   border-radius: 15px;
@@ -77,18 +88,25 @@ span:nth-of-type(2){
   background-color: var(--primary-gray);
 }
 
-.searchbar > img {
+.search-bar > img {
   height: 38px;
   width: auto;
 }
 
-.searchbar > button {
+.search-bar > button {
   top: 10px;
   right: 0px;
+  width: 10%;
   background-color: var(--secondary-blue);
   color: white;
   border: 1px solid var(--border-gray);
   border-radius: 10px;
+}
+
+.filter-button button {
+  border: 10px;
+  border-radius: 0;
+  transition: background-color 0.3s ease;
 }
 
 .document-container {
