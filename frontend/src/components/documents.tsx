@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import '../App.css';
+import { parseISO, format } from 'date-fns';
 import DocumentCard from './documentCard';
 import SearchBar from './searchbar';
 import FilterPanel from './filterpanel';
@@ -32,8 +33,6 @@ function Documents() {
       
       try {
         // Query Server for speeches
-        // Able to leave out the localhost/5000 portion because of proxy in package.json
-
         
         let paramList = []
         if (startDate)
@@ -45,6 +44,7 @@ function Documents() {
         
         const params = paramList.join("&");
           
+        // Able to leave out the localhost/5000 portion because of proxy in package.json
         const response = await fetch("/api/speeches?" + params, {method:"GET"});
         const returnedSpeeches = await response.json();
         setLoadedSpeeches(returnedSpeeches);
@@ -100,8 +100,9 @@ function Documents() {
       setSearchBarText(e.target.value);
     }
 
-    // To Remove, Just adding here to avoid unused variables
-    console.log(startDate,endDate);
+    const parseAndFormatDate = (dateStr:string) => {
+      return format(parseISO(dateStr.split('T')[0]), "MMMM d, yyyy");;
+    }
 
     return (
       <div className='documents'>
@@ -114,13 +115,14 @@ function Documents() {
             toggleSpecDate={toggleSpecDateCallback} setWord={setCurrentWordCallback} 
             currentWord={currentWord} removeItem={removeWordCallback}
             setStartDate={setStartDateCallback} setEndDate={setEndDateCallback}
+            startDate={startDate} endDate={endDate} 
             />          
         }
 
         {/* Displays all the document date */}
         <div className='document-container'>
           {!loadedSpeeches.length && <h2>No Results</h2>}
-          {loadedSpeeches.map((document,index) => (<DocumentCard key={index} title={document.title} date={new Date(document.date).toLocaleDateString("en-us", {year:"numeric", month: "long", day: "numeric"})} summary={document.summary ? document.summary! : ""} speaker={document.speaker}/>))}
+          {loadedSpeeches.map((document,index) => (<DocumentCard key={index} title={document.title} date={parseAndFormatDate(document.date)} summary={document.summary ? document.summary! : ""} speaker={document.speaker}/>))}
         </div>
 
       </div>

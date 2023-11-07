@@ -43,7 +43,7 @@ export const getFilteredSpeechInfo: RequestHandler = async (req, res, next)=>{
 
         // Logic for adding the intended queries
         if(givenSpeaker) {
-            const speakerRegex = new RegExp(".*" + givenSpeaker + ".*");
+            const speakerRegex = new RegExp(".*" + givenSpeaker + ".*", 'i');
             // Date & Speaker
             if(givenStartDate) {
                 mongooseQueries = {
