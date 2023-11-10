@@ -14,22 +14,29 @@
   text-align: center;
   padding: 20px 80px; 
   background-color: var(--primary-white);
-  height: 100vh;
+  min-height: 100vh;
   font-family: 'Lexend', sans-serif;
   display: flex;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .wrapper {
   width: 100%;
   flex: 1;
+  background-color: var(--primary-white);
   display: flex;
   flex-flow: column;
 }
 
-/*Used to wrap main content of page*/
+button {
+  transition: 0.2s ease-in-out;
+}
+
+/*Used to wrap main content of page and vertically center any child of wrapper*/
 .wrapper > * {
   display: flex;
-  align-items: center;
+  align-items: center; 
 }
 
 .header {
@@ -150,7 +157,7 @@ span:nth-of-type(2){
   align-items: flex-end;
 }
 
-.date-view-container > button {
+.date-view-container button {
   background-color: var(--secondary-blue);
   color: white;
   border: 1px solid var(--border-gray);
@@ -273,4 +280,74 @@ span:nth-of-type(2){
   color: white;
   border-radius: 10px;
   margin: 10px 10px;
+}
+
+.back {
+  background-color: var(--secondary-blue);
+  color: white;
+  border: 1px solid var(--border-gray);
+  border-radius: 10px;
+  padding: 2px 20px;
+
+}
+
+.link {text-decoration: none;}
+
+.individual-document h1 {
+  margin: 25px 0;
+  text-align: left;
+  font-weight: 600;
+}
+
+.individual-document h2 {
+  font-weight: 400;
+  font-size: 30px;
+}
+
+.individual-document h2::after {
+  display: block;
+  content: "";
+  height: 1px;
+  background-color: black;
+  margin-top: 8px;
+}
+
+.individual-document h3 {
+  font-weight: 300;
+  font-size: 25px;
+}
+
+.summary-container{
+  background-color: var(--primary-gray);
+  border: 1px solid var(--border-gray);
+  border-radius: 15px;
+  flex-direction: column;
+  margin: 20px 0;
+  padding: 18px 30px;
+  align-items: flex-start;
+}
+
+.summary-container p {
+  font-weight: 300;
+  font-size: 20px;
+  text-align: left;
+}
+
+.speech-content{
+  text-align: left;
+  font-size: 20px;
+  line-height: 35px;
+  padding: 10px 18px;
+  background-color: var(--primary-gray);
+  border-radius: 10px;
+  border: 1px solid var(--border-gray);
+}
+
+.collapse-button{
+  background-color: var(--secondary-blue);
+  color: white;
+  border-radius: 10px;
+  border: 1px solid var(--border-gray);
+  margin: 10px 20px 10px 0px;
+  padding: 4px 8px;
 }

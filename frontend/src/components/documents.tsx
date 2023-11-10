@@ -94,7 +94,7 @@ function Documents() {
         {/* Displays all the document date */}
         <div className='document-container'>
           {!loadedSpeeches.length && <h2>No Results</h2>}
-          {loadedSpeeches.map((document,index) => (<DocumentCard key={index} title={document.title} date={new Date(document.date).toLocaleDateString("en-us", {year:"numeric", month: "long", day: "numeric"})} summary={document.summary ? document.summary! : ""} speaker={document.speaker}/>))}
+          {loadedSpeeches.map((document,index) => (<DocumentCard key={document._id} id={document._id} title={document.title} date={new Date(document.date).toLocaleDateString("en-us", {year:"numeric", month: "long", day: "numeric"})} speaker={document.speaker}/>))}
         </div>
 
       </div>
