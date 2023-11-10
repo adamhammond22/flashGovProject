@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import '../App.css';
-import { parseISO, format } from 'date-fns';
+import { parseAndFormatDate } from './helpers';
 import DocumentCard from './documentCard';
 import SearchBar from './searchbar';
 import FilterPanel from './filterpanel';
@@ -100,9 +100,7 @@ function Documents() {
       setSearchBarText(e.target.value);
     }
 
-    const parseAndFormatDate = (dateStr:string) => {
-      return format(parseISO(dateStr.split('T')[0]), "MMMM d, yyyy");;
-    }
+    
 
     return (
       <div className='documents'>
@@ -122,7 +120,7 @@ function Documents() {
         {/* Displays all the document date */}
         <div className='document-container'>
           {!loadedSpeeches.length && <h2>No Results</h2>}
-          {loadedSpeeches.map((document,index) => (<DocumentCard key={index} title={document.title} date={parseAndFormatDate(document.date)} summary={document.summary ? document.summary! : ""} speaker={document.speaker}/>))}
+          {loadedSpeeches.map((document,index) => (<DocumentCard key={document._id} id={document._id} title={document.title} date={parseAndFormatDate(document.date)} speaker={document.speaker}/>))}
         </div>
 
       </div>
