@@ -16,15 +16,15 @@ mongoose.connect(env.MONGO_CONNECTION_STRING)
     .then(() => {
         console.log("Mongoose Connected");
 
-        /* Start Notes Server */
+        /* Start Primary Server */
         primaryServer.listen(port, ()=>{
             console.log("Primary Server is running on port: " + port);
         });
 
-        /* Start Primary Server */
-        notesServer.listen(notesPort, ()=>{
-            console.log("Notes Server is running on dummy port: " + notesPort);
-        });
+        /* Start Notes Server */
+        // notesServer.listen(notesPort, ()=>{
+        //     console.log("Notes Server is running on dummy port: " + notesPort);
+        // });
     })
     .catch(console.error);
 

@@ -1,4 +1,4 @@
-/* ==================================== speeches.ts ==================================== */
+/* ==================================== speechModel.ts ==================================== */
 // Defines the Speech schema used in the database
 import { InferSchemaType, Schema, model } from "mongoose";
 

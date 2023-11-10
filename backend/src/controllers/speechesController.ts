@@ -4,6 +4,9 @@ import { RequestHandler } from "express";
 import SpeechModel from "../models/speechModel";
 import createHttpError from "http-errors";
 import mongoose from "mongoose";
+// Use moment to validate dates
+const moment = require('moment');
+
 
 // ============================== All Middleware ============================== //
 
@@ -71,7 +74,6 @@ export const createSpeech: RequestHandler<unknown, unknown, CreateSpeechBody, un
     const givenSpeaker = req.body.speaker;
     const givenSection = req.body.section;
     const givenSummary = req.body.summary;
-    
     try {
         // Ensure Required fields were provided
         if(!givenTitle) {
@@ -84,6 +86,11 @@ export const createSpeech: RequestHandler<unknown, unknown, CreateSpeechBody, un
             throw createHttpError(400, "Speech must have a speaker");
         } else if(!givenSection) {
             throw createHttpError(400, "Speech must have a legislative body / section");
+        }
+
+        // Check for invalid date format
+        if(! moment(givenDate, 'MM-DD-YYYY', true).isValid()) {
+            throw createHttpError(400, "Speech date invalid: Must satisfy MM-DD-YYYY");
         }
 
         // Create the new Speech
@@ -150,6 +157,12 @@ export const updateSpeech: RequestHandler<UpdateSpeechParams, unknown, UpdateSpe
             throw createHttpError(400, "Speech must have a speaker");
         } else if(!givenSection) {
             throw createHttpError(400, "Speech must have a section");
+        }
+
+
+        // Check for invalid date format
+        if(! moment(givenDate, 'MM-DD-YYYY', true).isValid()) {
+            throw createHttpError(400, "Speech date invalid: Must satisfy MM-DD-YYYY");
         }
 
         // Find the speech
