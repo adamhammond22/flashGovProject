@@ -4,8 +4,11 @@ import { RequestHandler } from "express";
 import SpeechModel from "../models/speechModel";
 import createHttpError from "http-errors";
 import mongoose from "mongoose";
+import {generateSummaryLocal, generateSummaryInference}  from "../utils/generateSummary";
 // Use moment to validate dates
 const moment = require('moment');
+
+
 
 
 // ============================== All Middleware ============================== //
@@ -45,7 +48,26 @@ export const getSingleSpeech: RequestHandler = async (req, res, next) => {
             throw createHttpError(404, "Speech not found");
         }
 
+        // If there is no summary, generate one
+        if (!doc.summary)
+        {
+            let text = atob(doc.text);
+            let input = `Concisely summarize this speech given by ${doc.speaker} in the ${doc.section} and present the arguments that they make: \"${text}\"`;
+
+            // const GenSummaryRes = await generateSummaryLocal(input);
+            // console.log("Res success:", GenSummaryRes.success)
+            // if(GenSummaryRes.success) {
+            //     console.log("Res summary:", GenSummaryRes.summary);
+            // } else {
+            //     console.log("Res error:", GenSummaryRes.error);
+            //     throw createHttpError(500, GenSummaryRes.error);
+            // }
+            // doc.summary = GenSummaryRes.summary;
+            generateSummaryInference(input);
+        }
+        
         res.status(200).json(doc);
+
 
     } catch (error) {
         next(error);

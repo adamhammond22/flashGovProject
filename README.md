@@ -43,3 +43,44 @@ Logging tool for our server
 
 HTTP-errors:
 Package for creating easy http errors
+
+
+### Summarization:
+We can either do summarization locally or with an API. I think we can try out both.
+
+## Local:
+This method would entail traiining our own model and then using it on the server in order to generate predictions.
+There are tutorials to summarize legal documents: "https://www.youtube.com/watch?v=tc87-ZKWm78"
+
+This is a tutorial for using transformers on node.js: https://huggingface.co/docs/transformers.js/tutorials/node 
+
+
+
+Pros:
+- No rate limits
+- Likely comparable speed (compared to free tiers) this needs to be validated though
+- Likely better  ov
+Cons:
+- More time spent fine tuning the model
+- Figuring out how to do python to JS, or figuring out how to do this in JS
+- Remote server could be very slow running on poor-hardware devices
+
+## Remote:
+The huggingface API:
+Pros:
+- Superior summarizations to any of the other generic local models we've tried
+- Decently fast
+- Been capable of understanding who is speaking and will write summarizations which summarize one's arguments but don't state them as fact
+Cons:
+- Rate limited
+
+
+Transformers.js is a huggingface transformer model package. With this we can simply import pretrained huggingface models and run them on our server.
+
+## Models We've Tried:
+ - Bert (Local): very very innaccurate, likely needs finetuning
+ - gpt2 (Inference): a bit better, not amazing
+ - facebook/bart-large-cnn (Inference): decent AND FAST
+
+## Model Prompt Notes:
+- Specifying in the prompt that the model should present the argument they make as an argument rather than as fact was effective.
