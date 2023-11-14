@@ -4,8 +4,7 @@ import { parseAndFormatDate } from './helpers';
 import DocumentCard from './documentCard';
 import SearchBar from './searchbar';
 import FilterPanel from './filterpanel';
-// Import speech obj interfaces
-import { Speech } from '../models/speechInterface';
+import { useSpeechesStore } from '../speechesStore';
 
 function Documents() {
 
@@ -22,7 +21,7 @@ function Documents() {
     const [searchBarText, setSearchBarText] = useState("");
   
     /* State of loaded speeches */
-    const [loadedSpeeches, setLoadedSpeeches] = useState<Speech[]>([]);
+    const {speeches, setSpeeches} = useSpeechesStore()
 
     useEffect(()=>{
       //loadSpeeches();
@@ -47,7 +46,7 @@ function Documents() {
         // Able to leave out the localhost/5000 portion because of proxy in package.json
         const response = await fetch("/api/speeches?" + params, {method:"GET"});
         const returnedSpeeches = await response.json();
-        setLoadedSpeeches(returnedSpeeches);
+        setSpeeches(returnedSpeeches);
       } catch (error) {
         console.error(error);
         alert(error);
@@ -100,8 +99,6 @@ function Documents() {
       setSearchBarText(e.target.value);
     }
 
-    
-
     return (
       <div className='documents'>
         <SearchBar toggleFilter={toggleFilterCallback} onSearchBarChanged={onSearchBarChanged} searchCallback={performSearch} searchingState={searchingState} />
@@ -119,8 +116,8 @@ function Documents() {
 
         {/* Displays all the document date */}
         <div className='document-container'>
-          {!loadedSpeeches.length && <h2>No Results</h2>}
-          {loadedSpeeches.map((document,index) => (<DocumentCard key={document._id} id={document._id} title={document.title} date={parseAndFormatDate(document.date)} speaker={document.speaker}/>))}
+          {!speeches.length && <h2>No Results</h2>}
+          {speeches.map((document,index) => (<DocumentCard key={document._id} id={document._id} title={document.title} date={parseAndFormatDate(document.date)} speaker={document.speaker}/>))}
         </div>
 
       </div>
