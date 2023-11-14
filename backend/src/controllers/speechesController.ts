@@ -67,7 +67,6 @@ export const getSingleSpeech: RequestHandler = async (req, res, next) => {
             const GenSummaryRes = await generateSummary(promptInput);
 
             if(GenSummaryRes.success) {
-                console.log("Res summary:", GenSummaryRes.summary);
                 // We would save the summary here
             } else {
                 throw createHttpError(500, GenSummaryRes.error);
