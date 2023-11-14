@@ -9,6 +9,7 @@ const speechSchema = new Schema({
     date: {type: Date, required: true},
     speaker: {type: String, required: true},
     section: {type: String, required: true},
+    url: {type: String, required: true},
     summary: {type: String}
 },
 {

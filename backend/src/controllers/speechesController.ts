@@ -62,6 +62,7 @@ interface CreateSpeechBody {
     date: Date,
     speaker: string,
     section: string, 
+    url: string,
     summary?: string,
 }
 
@@ -74,6 +75,7 @@ export const createSpeech: RequestHandler<unknown, unknown, CreateSpeechBody, un
     const givenSpeaker = req.body.speaker;
     const givenSection = req.body.section;
     const givenSummary = req.body.summary;
+    const givenURL = req.body.url;
     try {
         // Ensure Required fields were provided
         if(!givenTitle) {
@@ -86,6 +88,8 @@ export const createSpeech: RequestHandler<unknown, unknown, CreateSpeechBody, un
             throw createHttpError(400, "Speech must have a speaker");
         } else if(!givenSection) {
             throw createHttpError(400, "Speech must have a legislative body / section");
+        } else if(!givenURL) {
+            throw createHttpError(400, "Speech must have a url");
         }
 
         // Check for invalid date format
@@ -100,6 +104,7 @@ export const createSpeech: RequestHandler<unknown, unknown, CreateSpeechBody, un
             date: givenDate,
             speaker: givenSpeaker,
             section: givenSection,
+            url: givenURL,
             summary: givenSummary,
         });
 
@@ -122,6 +127,7 @@ interface UpdateSpeechBody {
     date: Date,
     speaker: string,
     section: string, 
+    url: string,
     summary?: string,
 }
 interface UpdateSpeechParams {
@@ -138,6 +144,7 @@ export const updateSpeech: RequestHandler<UpdateSpeechParams, unknown, UpdateSpe
     const givenDate = req.body.date;
     const givenSpeaker = req.body.speaker;
     const givenSection = req.body.section;
+    const givenURL = req.body.url;
     const givenSummary = req.body.summary;
     
     try {
@@ -157,6 +164,8 @@ export const updateSpeech: RequestHandler<UpdateSpeechParams, unknown, UpdateSpe
             throw createHttpError(400, "Speech must have a speaker");
         } else if(!givenSection) {
             throw createHttpError(400, "Speech must have a section");
+        } else if(!givenURL) {
+            throw createHttpError(400, "Speech must have a url");
         }
 
 
@@ -178,6 +187,7 @@ export const updateSpeech: RequestHandler<UpdateSpeechParams, unknown, UpdateSpe
         speech.speaker = givenSpeaker;
         speech.section = givenSection;
         speech.summary = givenSummary;
+        speech.url = givenURL;
 
         // Use mongoose save method, and await response
         const updatedSpeech = await speech.save(); 
