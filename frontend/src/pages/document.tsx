@@ -7,8 +7,7 @@ function Document() {
     // Getting document ID From url parameter
     const {id} = useParams()
     const [speechInfo,setSpeechInfo] = useState({title:"",speaker:"",
-    date: "" ,text:"",section:"",
-    summary:""})
+    date: "" ,text:"",section:"", summary:"", url:""})
 
     const [collapsed, toggleCollapsed] = useState(true);
 
@@ -36,6 +35,9 @@ function Document() {
                 <h3>Date of Speech: {speechInfo.date}</h3>
                 <h3>Speaker: {speechInfo.speaker}</h3>
                 <h3>Chamber: {speechInfo.section}</h3>
+                <div className="source-button">
+                    {speechInfo.url && <h3><a href={speechInfo.url} target="_blank" rel="noopener noreferrer"><button className="back">Source</button></a></h3>}
+                </div>
                 <div className="summary-container">
                     <h2>Summary</h2>
                     <p>{speechInfo.summary}</p>
