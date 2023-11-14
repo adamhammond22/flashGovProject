@@ -2,7 +2,7 @@
 // Houses all Middleware (Request Handlers) used in speech routing 
 import { RequestHandler } from "express";
 import SpeechModel from "../models/speechModel";
-import createHttpError from "http-errors";
+import createHttpError from 'http-errors';
 import mongoose from "mongoose";
 import {generateSummary, PromptInput} from "../utils/generateSummary";
 // Use moment to validate dates
@@ -14,17 +14,19 @@ const moment = require('moment');
 // ============================== All Middleware ============================== //
 
 // ========== Get All Speech Middleware ========== //
-export const getAllSpeeches: RequestHandler = async (req, res, next)=>{
+// Not in use atm
+// export const getAllSpeeches: RequestHandler = async (req, res, next)=>{
 
-    try {
-        // Find all speechs and return
-        const speeches = await SpeechModel.find().exec();
-        res.status(200).json(speeches);        
+//     try {
+//         // Find all speechs and return
 
-    } catch (error) {
-        next(error);
-    }
-};
+//         const speeches = await SpeechModel.find().exec();
+//         res.status(200).json(speeches);        
+
+//     } catch (error) {
+//         next(error);
+//     }
+// };
 
 
 
@@ -66,8 +68,8 @@ export const getSingleSpeech: RequestHandler = async (req, res, next) => {
 
             if(GenSummaryRes.success) {
                 console.log("Res summary:", GenSummaryRes.summary);
+                // We would save the summary here
             } else {
-                console.log("Res error:", GenSummaryRes.error);
                 throw createHttpError(500, GenSummaryRes.error);
             }
             doc.summary = GenSummaryRes.summary;
