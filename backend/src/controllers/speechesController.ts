@@ -2,26 +2,33 @@
 // Houses all Middleware (Request Handlers) used in speech routing 
 import { RequestHandler } from "express";
 import SpeechModel from "../models/speechModel";
-import createHttpError from "http-errors";
+import createHttpError from 'http-errors';
 import mongoose from "mongoose";
+import {generateSummary, PromptInput} from "../utils/generateSummary";
 // Use moment to validate dates
 const moment = require('moment');
+
+
 
 
 // ============================== All Middleware ============================== //
 
 // ========== Get All Speech Middleware ========== //
-export const getAllSpeeches: RequestHandler = async (req, res, next)=>{
+// Not in use atm
+// export const getAllSpeeches: RequestHandler = async (req, res, next)=>{
 
-    try {
-        // Find all speechs and return
-        const speeches = await SpeechModel.find().exec();
-        res.status(200).json(speeches);        
+//     try {
+//         // Find all speechs and return
 
-    } catch (error) {
-        next(error);
-    }
-};
+//         const speeches = await SpeechModel.find().exec();
+//         res.status(200).json(speeches);        
+
+//     } catch (error) {
+//         next(error);
+//     }
+// };
+
+
 
 
 // ========== Get Single Speech (by id) ========== //
@@ -45,7 +52,31 @@ export const getSingleSpeech: RequestHandler = async (req, res, next) => {
             throw createHttpError(404, "Speech not found");
         }
 
+        // If there is no summary, generate one
+        if (!doc.summary)
+        {
+            // Translate our b64 encoded text into a regular string
+            let text = atob(doc.text);
+            // Create prompt for Algorithem
+            const promptInput: PromptInput = {
+                documentSpeaker: doc.speaker,
+                documentSection: doc.section,
+                documentText: text,
+              };
+            // Generate a summary using our prompt input and get a response
+            const GenSummaryRes = await generateSummary(promptInput);
+
+            if(GenSummaryRes.success) {
+                console.log("Res summary:", GenSummaryRes.summary);
+                // We would save the summary here
+            } else {
+                throw createHttpError(500, GenSummaryRes.error);
+            }
+            doc.summary = GenSummaryRes.summary;
+        }
+        
         res.status(200).json(doc);
+
 
     } catch (error) {
         next(error);

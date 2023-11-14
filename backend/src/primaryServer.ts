@@ -33,7 +33,7 @@ app.use((req: Request, res: Response, next: NextFunction)=> {
 
 // ======== Error Handler Middleware ======== //
 // Handle all errors encountered and returning the status
-app.use((error: unknown, req: Request, res: Response) => {
+app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
     console.error(error); //Throw the error in the server console
 
     // Default error message and code
@@ -45,7 +45,6 @@ app.use((error: unknown, req: Request, res: Response) => {
         statusCode = error.status;
         errorMessage = error.message;
     }
-
     // Return error status and json of error message
     res.status(statusCode).json({error: errorMessage});
 })
