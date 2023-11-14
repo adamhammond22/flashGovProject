@@ -4,7 +4,7 @@ import { RequestHandler } from "express";
 import SpeechModel from "../models/speechModel";
 import createHttpError from "http-errors";
 import mongoose from "mongoose";
-import {generateSummaryLocal, generateSummaryInference}  from "../utils/generateSummary";
+import {generateSummary, PromptInput} from "../utils/generateSummary";
 // Use moment to validate dates
 const moment = require('moment');
 
@@ -25,6 +25,8 @@ export const getAllSpeeches: RequestHandler = async (req, res, next)=>{
         next(error);
     }
 };
+
+
 
 
 // ========== Get Single Speech (by id) ========== //
@@ -51,19 +53,24 @@ export const getSingleSpeech: RequestHandler = async (req, res, next) => {
         // If there is no summary, generate one
         if (!doc.summary)
         {
+            // Translate our b64 encoded text into a regular string
             let text = atob(doc.text);
-            let input = `Concisely summarize this speech given by ${doc.speaker} in the ${doc.section} and present the arguments that they make: \"${text}\"`;
+            // Create prompt for Algorithem
+            const promptInput: PromptInput = {
+                documentSpeaker: doc.speaker,
+                documentSection: doc.section,
+                documentText: text,
+              };
+            // Generate a summary using our prompt input and get a response
+            const GenSummaryRes = await generateSummary(promptInput);
 
-            // const GenSummaryRes = await generateSummaryLocal(input);
-            // console.log("Res success:", GenSummaryRes.success)
-            // if(GenSummaryRes.success) {
-            //     console.log("Res summary:", GenSummaryRes.summary);
-            // } else {
-            //     console.log("Res error:", GenSummaryRes.error);
-            //     throw createHttpError(500, GenSummaryRes.error);
-            // }
-            // doc.summary = GenSummaryRes.summary;
-            generateSummaryInference(input);
+            if(GenSummaryRes.success) {
+                console.log("Res summary:", GenSummaryRes.summary);
+            } else {
+                console.log("Res error:", GenSummaryRes.error);
+                throw createHttpError(500, GenSummaryRes.error);
+            }
+            doc.summary = GenSummaryRes.summary;
         }
         
         res.status(200).json(doc);

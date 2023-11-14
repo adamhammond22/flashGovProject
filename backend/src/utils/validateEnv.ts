@@ -7,5 +7,6 @@ import { port, str } from "envalid/dist/validators";
 In it, we define the name and type of the environment variables */
 export default cleanEnv(process.env, {
     MONGO_CONNECTION_STRING: str(),
+    INFERENCE_CONNECTION_STRING: str(),
     PORT: port(),
 })
