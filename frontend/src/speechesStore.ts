@@ -1,4 +1,4 @@
-import {create} from 'zustand'
+import { create } from 'zustand'
 import { Speech } from './models/speechInterface'
 
 // This defines the data that will be returned when you call useSpeechesStore
@@ -17,5 +17,9 @@ export const useSpeechesStore = create<SpeechesState>((set) => (
 
 /* Example Usage: 
 import { useSpeechesStore } from './speechesStore';
-
+const {speeches, setSpeeches} = useSpeechesStore()
+function example() {
+    newSpeechesList = Speech[];
+    setSpeeches(newSpeechesList);
+}
 */
