@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom"
 import { parseAndFormatDate } from "../components/helpers";
+import Spinner from 'react-bootstrap/Spinner';
 
 function Document() {
 
@@ -10,21 +11,27 @@ function Document() {
     date: "" ,text:"",section:"", summary:"", url:""})
 
     const [collapsed, toggleCollapsed] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const getSpeechInfo = async() => {
            try {
+                setLoading(true);
                 const res = await fetch(`/api/speeches/${id}`);
                 const resJson = await res.json()
                 const dateString = parseAndFormatDate(resJson.date)
                 const decodeText = atob(resJson.text)
                 setSpeechInfo({...resJson, date:dateString,text:decodeText});
+                setLoading(false);
            } catch (e) {
             alert(e);
            }
         }
         getSpeechInfo();
     },[id])
+    
+    if (loading)
+        return (<div className="App" style ={{justifyContent: 'center', alignItems: 'center', display: 'flex',}}><Spinner/></div>);
 
     return (
         <div className="App">
@@ -36,7 +43,7 @@ function Document() {
                 <h3>Speaker: {speechInfo.speaker}</h3>
                 <h3>Chamber: {speechInfo.section}</h3>
                 <div className="source-button">
-                    {speechInfo.url && <h3><a href={speechInfo.url} target="_blank" rel="noopener noreferrer"><button className="back">Source</button></a></h3>}
+                    {speechInfo.url && <a href={speechInfo.url} target="_blank" rel="noopener noreferrer"><button className="back">Source</button></a>}
                 </div>
                 <div className="summary-container">
                     <h2>Summary</h2>
