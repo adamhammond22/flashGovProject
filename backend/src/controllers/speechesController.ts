@@ -122,6 +122,7 @@ interface UpdateSpeechBody {
     date: Date,
     speaker: string,
     section: string, 
+    url: string,
     summary?: string,
 }
 interface UpdateSpeechParams {
@@ -138,6 +139,7 @@ export const updateSpeech: RequestHandler<UpdateSpeechParams, unknown, UpdateSpe
     const givenDate = req.body.date;
     const givenSpeaker = req.body.speaker;
     const givenSection = req.body.section;
+    const givenURL = req.body.url;
     const givenSummary = req.body.summary;
     
     try {
@@ -157,6 +159,8 @@ export const updateSpeech: RequestHandler<UpdateSpeechParams, unknown, UpdateSpe
             throw createHttpError(400, "Speech must have a speaker");
         } else if(!givenSection) {
             throw createHttpError(400, "Speech must have a section");
+        } else if(!givenURL) {
+            throw createHttpError(400, "Speech must have a url");
         }
 
 
@@ -178,6 +182,7 @@ export const updateSpeech: RequestHandler<UpdateSpeechParams, unknown, UpdateSpe
         speech.speaker = givenSpeaker;
         speech.section = givenSection;
         speech.summary = givenSummary;
+        speech.url = givenURL;
 
         // Use mongoose save method, and await response
         const updatedSpeech = await speech.save(); 
