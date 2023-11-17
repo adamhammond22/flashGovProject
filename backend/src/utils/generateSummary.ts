@@ -3,6 +3,7 @@
 // Pipelines are extremely high level apis that abstract away nearly all the complexity of inputting text into a model
 import env from "./validateEnv" // Import pre-validated environment variable
 const {default : fetch} = require('node-fetch');
+import createHttpError from "http-errors";
 
 /* ===== Custom Typing and Responses for GenerateSummary ===== */
 
@@ -28,9 +29,9 @@ class ErrorResponse {
 
 // This defines the input to generate Summary. It holds all information needed for our prompt
 interface PromptInput {
-  documentSpeaker: string;
-  documentSection: string;
-  documentText: string;
+  speechSpeaker: string;
+  speechSection: string;
+  speechText: string;
 }
 
 
@@ -47,13 +48,36 @@ type PipelineQueryResponse = PipelineQueryItem[];
 // The endpoint should not care how it's done, this function will conditionally call it's helpers to worry about this
 const generateSummary= async (promptInput: PromptInput): Promise<GenSummaryResponse> => {
 
-  let promptString = `Concisely summarize this speech given by ${promptInput.documentSpeaker} in the ${promptInput.documentSection}`+
-  `and present the arguments that they make: \"${promptInput.documentText}\"`;
+  let promptString = `Concisely summarize this speech given by ${promptInput.speechSpeaker} in the ${promptInput.speechSection}`+
+  `and present the arguments that they make: \"${promptInput.speechText}\"`;
 
   return generateSummaryInference(promptString);
 }
 
+// Generates a summary if needed and returns whether or not a new summary was generated
+const generateSummaryIfNeeded = async (speech:any): Promise<boolean> => {
+  if (!speech.summary)
+        {
+            // Translate our b64 encoded text into a regular string
+            let text = atob(speech.text);
+            // Create prompt for Algorithm
+            const promptInput: PromptInput = {
+                speechSpeaker: speech.speaker,
+                speechSection: speech.section,
+                speechText: text,
+              };
+            // Generate a summary using our prompt input and get a response
+            const GenSummaryRes = await generateSummary(promptInput);
 
+            if(GenSummaryRes.success) {
+              speech.summary = GenSummaryRes.summary;
+                return true;
+            } else {
+                throw createHttpError(500, GenSummaryRes.error);
+            }
+        }
+  return false;
+}
 
 /* ==================== Helper Functions ==================== */
 
@@ -144,4 +168,4 @@ const generateSummaryInference = async (input: string): Promise<GenSummaryRespon
 }
 
 
-export {generateSummary, PromptInput};
+export {generateSummary, generateSummaryIfNeeded, PromptInput};

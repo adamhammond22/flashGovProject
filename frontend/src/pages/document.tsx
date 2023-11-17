@@ -71,7 +71,7 @@ function Document() {
                 <div className="summary-container">
                     <h2>Summary</h2>
                     <p>{speechInfo.summary}</p>
-                    <div className="refresh-button" title="Refresh Summary">
+                    <div className="refresh-button" title="Regenerate summary">
                         <IconContext.Provider value={{className: "refresh-button", size: '30px'}}>
                             <button style={{backgroundColor:'#E3E3E3'}} onClick={clearCurrentSummary}><TbRefresh/></button>
                         </IconContext.Provider>
