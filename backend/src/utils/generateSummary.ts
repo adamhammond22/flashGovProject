@@ -3,6 +3,7 @@
 // Pipelines are extremely high level apis that abstract away nearly all the complecxity of inputting text into a model
 import env from "./validateEnv" // Import pre-validated environment variable
 const {default : fetch} = require('node-fetch');
+import Speech from "../models/speechModel";
 
 /* ===== Custom Typing and Responses for GenerateSummary ===== */
 
@@ -51,6 +52,29 @@ const generateSummary= async (promptInput: PromptInput): Promise<GenSummaryRespo
   `and present the arguments that they make: \"${promptInput.documentText}\"`;
 
   return generateSummaryInference(promptString);
+}
+
+const generateSummaryIfNeeded = async (doc:any): Promise<boolean> => {
+  if (!doc.summary)
+        {
+            // Translate our b64 encoded text into a regular string
+            let text = atob(doc.text);
+            // Create prompt for Algorithm
+            const promptInput: PromptInput = {
+                documentSpeaker: doc.speaker,
+                documentSection: doc.section,
+                documentText: text,
+              };
+            // Generate a summary using our prompt input and get a response
+            const GenSummaryRes = await generateSummary(promptInput);
+
+            if(GenSummaryRes.success) {
+                // We would save the summary here
+            } else {
+                throw createHttpError(500, GenSummaryRes.error);
+            }
+            doc.summary = GenSummaryRes.summary;
+        }
 }
 
 
