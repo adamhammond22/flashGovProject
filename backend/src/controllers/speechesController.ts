@@ -5,6 +5,7 @@ import SpeechModel from "../models/speechModel";
 import createHttpError from 'http-errors';
 import mongoose from "mongoose";
 import {generateSummary, PromptInput} from "../utils/generateSummary";
+import {validateDateString} from "../utils/validateDate";
 // Use moment to validate dates
 const moment = require('moment');
 
@@ -57,7 +58,7 @@ export const getSingleSpeech: RequestHandler = async (req, res, next) => {
         {
             // Translate our b64 encoded text into a regular string
             let text = atob(doc.text);
-            // Create prompt for Algorithem
+            // Create prompt for Algorithm
             const promptInput: PromptInput = {
                 documentSpeaker: doc.speaker,
                 documentSection: doc.section,
@@ -121,12 +122,12 @@ export const createSpeech: RequestHandler<unknown, unknown, CreateSpeechBody, un
         } else if(!givenURL) {
             throw createHttpError(400, "Speech must have a url");
         }
-
+/*
         // Check for invalid date format
         if(! moment(givenDate, 'MM-DD-YYYY', true).isValid()) {
             throw createHttpError(400, "Speech date invalid: Must satisfy MM-DD-YYYY");
         }
-
+*/
         // Create the new Speech
         const newSpeech = await SpeechModel.create({
             title: givenTitle,
@@ -197,12 +198,11 @@ export const updateSpeech: RequestHandler<UpdateSpeechParams, unknown, UpdateSpe
         } else if(!givenURL) {
             throw createHttpError(400, "Speech must have a url");
         }
-
-
-        // Check for invalid date format
-        if(! moment(givenDate, 'MM-DD-YYYY', true).isValid()) {
+/*
+        if(!validateDateString(givenDate)) {
             throw createHttpError(400, "Speech date invalid: Must satisfy MM-DD-YYYY");
         }
+*/
 
         // Find the speech
         const speech = await SpeechModel.findById(speechId).exec();

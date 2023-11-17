@@ -1,6 +1,6 @@
 /* Summary generation functions */
 // Import the pipeline for the transformer
-// Pipelines are extremely high level apis that abstract away nearly all the complecxity of inputting text into a model
+// Pipelines are extremely high level apis that abstract away nearly all the complexity of inputting text into a model
 import env from "./validateEnv" // Import pre-validated environment variable
 const {default : fetch} = require('node-fetch');
 
