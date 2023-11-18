@@ -4,8 +4,10 @@ import threading
 import time
 import queue # get a the threadsafe queue
 
+
 # ========== Summarizer worker manager ========== #
 # This allows the starting and stopping of one thread, which takes from the provided queue
+
 class SummarizerWorkManager():
     def __init__(self, summaryQueue: queue.Queue(), delay=0.5):
         self.summaryQueue = summaryQueue
@@ -34,21 +36,33 @@ class SummarizerWorkManager():
 # ========== Summarizer work function ========== #
 # This worker is implemented by the worker manager
 # This worker will run the model asking for summaries 
+
 def summarizerWorkFunction(stopWorkerEvent: threading.Event() , summaryQueue):
 
     while (not stopWorkerEvent.is_set()):
         
-        # Attempt to grab an item from the summaryQueue (NONBLOCKING)
+        
         try:
+            # Attempt to grab an item from the summaryQueue (NONBLOCKING)
             item = summaryQueue.get(block=False)
+            
+            
+            # ===== Actual summary goes here, this is a placeholder ===== #
             item['summary']= f"Yup, this is a summary of {item['text']}"
-            time.sleep(5)
+            time.sleep(1)
+            # ===== Actual summary goes here, this is a placeholder  ===== #
+            
+            
+            # Tell the Flask thread to wake up
             item['event'].set()
+            
+            #Tell the queue we're done with this item
             summaryQueue.task_done()
+
         except queue.Empty:
             # If queue is empty, wait
             time.sleep(1)
 
-        #Tell the queue we're done with this item
+        
 
         
