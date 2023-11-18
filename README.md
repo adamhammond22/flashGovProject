@@ -84,3 +84,19 @@ Transformers.js is a huggingface transformer model package. With this we can sim
 
 ## Model Prompt Notes:
 - Specifying in the prompt that the model should present the argument they make as an argument rather than as fact was effective.
+
+## Flask Server Setup
+
+Install anaconda for python.
+
+Then create the environment we're using for the server with:
+ - conda env create -f environment.yml
+
+Activate the environment using
+ - conda activate FlashGov_ML_Server
+
+If theres download issues, try updating the channels
+- conda install -c pytorch pytorch torchvision torchaudio OR conda update --all
+
+You can also update packages this way but be careful: this may add packages you dont use!
+- pdate packages: conda env update -f environment.yml
