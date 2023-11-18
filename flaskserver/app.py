@@ -2,11 +2,9 @@
 # This holds the main application of our flask server
 from flask import Flask, request, jsonify, abort
 import base64
-import json
-import time
 import threading # to check thread ids
+import time
 import queue # get a threadsafe queue
-import asyncio
 # import our custom summarizer worker
 from summarizer import SummarizerWorkManager
 
@@ -14,9 +12,10 @@ from summarizer import SummarizerWorkManager
 # Application instance
 app = Flask(__name__)
 
-# Threadsafe Queue
+# Threadsafe Queue params
 queue_maximum_size = 1
 queue_timeout = 2
+wait_in_queue_timeout = 1
 
 
 # ========== Custom Error Handlers ========== #
@@ -25,6 +24,7 @@ def bad_request(error):
     description = error.description
     return jsonify({"error": f"Bad Request: {description}"}), 400
 
+ 
 
 @app.route('/summary', methods=['GET'])
 def summary():
@@ -57,19 +57,22 @@ def summary():
                 summaryQueue.put(requestData, timeout=queue_timeout)
                 
             except queue.Full:
-                abort(501, description="Queue is full, server overloaded, sorry :(")
+                abort(503, description="Server overloaded: Queue full")
             
             # ===== Wait for summarization to be returned (BLOCKING) ===== #
-            wakeThreadEvent.wait()
             
-            if(not requestData):
+
+            summaryFinished = wakeThreadEvent.wait(wait_in_queue_timeout)
+            if(not summaryFinished):
+                abort(503, description="Server overloaded: Timed out waiting for summary")
+            elif(not requestData):
                 abort(500, description="Summary Generation returned no response")
-            elif (requestData.summary == ''):
-                errorMessage = requestData.error if requestData.error != '' else "Unknown"
+            elif (requestData['summary'] == ''):
+                errorMessage = requestData['error'] if requestData['error'] != '' else "Unknown"
                 abort(500, description=f"Summary Generation Failure Error: {errorMessage}")
             
             # Return summary as JSON
-            return jsonify({'summary': requestData.summary})
+            return jsonify({'summary': requestData['summary']})
 
         else:
             # Throw missing text error
@@ -81,7 +84,6 @@ def summary():
 
 
 
-print("name:", __name__)
 # This allows the flask server to be activated by "python app.py" rather than through flask run.
 if (__name__ == '__main__'):
     port = 5002
@@ -90,20 +92,13 @@ if (__name__ == '__main__'):
     summaryQueue = queue.Queue(maxsize=queue_maximum_size)
     
 
-    print(f"Starting manager t:{threading.get_ident()}")
     # Setup and begin our summarizer worker
     sumarizerWorkerManager = SummarizerWorkManager(summaryQueue)
     sumarizerWorkerManager.startWorking()
-    print(f"we are past the starting of the thread t:{threading.get_ident()}")
-    print(f"there is no reason there should be 2 threads... t:{threading.get_ident()}")
     # Once the worker is ready, we'll open the port
-    print(f"starting on port: {port}")
-    app.run(debug=True, port=port, threaded=True)
+    print(f"Starting Flask server on port: {port}")
+    app.run(port=port, threaded=True)
     
     
-    print(f"shutting down server... t: {threading.get_ident()}")
+    print("Shutting down Flask server...")
     sumarizerWorkerManager.stopWorking()
-    
-
-async def summarizer(summary: str):
-    return 5

@@ -4,7 +4,7 @@ import threading
 import time
 import queue # get a the threadsafe queue
 
-# This is a worke manager for the summarizer
+# ========== Summarizer worker manager ========== #
 # This allows the starting and stopping of one thread, which takes from the provided queue
 class SummarizerWorkManager():
     def __init__(self, summaryQueue: queue.Queue(), delay=0.5):
@@ -16,7 +16,6 @@ class SummarizerWorkManager():
 
     # Start the worker thread
     def startWorking(self):
-        print("Startworking called")
         if(not self.running):
             self.running = True
             self.summarizerWorkerThread = threading.Thread(target=summarizerWorkFunction, args=(self.stopWorkerEvent, self.summaryQueue))
@@ -30,27 +29,26 @@ class SummarizerWorkManager():
 
     def __del__(self):
         self.stopWorking()
-        
+
+
+# ========== Summarizer work function ========== #
+# This worker is implemented by the worker manager
+# This worker will run the model asking for summaries 
 def summarizerWorkFunction(stopWorkerEvent: threading.Event() , summaryQueue):
-    print(f"SummarizerWorker thread {threading.get_ident()} listening for work")
 
     while (not stopWorkerEvent.is_set()):
         
         # Attempt to grab an item from the summaryQueue (NONBLOCKING)
         try:
             item = summaryQueue.get(block=False)
-            print("worker got work!")
-            item.summary = f"Yup, this is a summary of {item.text}"
+            item['summary']= f"Yup, this is a summary of {item['text']}"
             time.sleep(5)
-            item.event.set()
+            item['event'].set()
             summaryQueue.task_done()
-            print("worker done w work!")
         except queue.Empty:
-            # Do nothing on empty
-            time.sleep(5)
+            # If queue is empty, wait
+            time.sleep(1)
 
-        print(f"worker {threading.get_ident()}  loop")
         #Tell the queue we're done with this item
 
         
-    print(f"SummarizerWorker thread {threading.get_ident()} stopping work")
