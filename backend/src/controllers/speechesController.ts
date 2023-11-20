@@ -4,11 +4,8 @@ import { RequestHandler } from "express";
 import SpeechModel from "../models/speechModel";
 import createHttpError from 'http-errors';
 import mongoose from "mongoose";
-import {generateSummary, PromptInput} from "../utils/generateSummary";
-// Use moment to validate dates
-const moment = require('moment');
-
-
+import {generateSummaryIfNeeded} from "../utils/generateSummary";
+import {validateDateString} from "../utils/validateDate";
 
 
 // ============================== All Middleware ============================== //
@@ -27,9 +24,6 @@ const moment = require('moment');
 //         next(error);
 //     }
 // };
-
-
-
 
 // ========== Get Single Speech (by id) ========== //
 export const getSingleSpeech: RequestHandler = async (req, res, next) => {
@@ -53,25 +47,8 @@ export const getSingleSpeech: RequestHandler = async (req, res, next) => {
         }
 
         // If there is no summary, generate one
-        if (!doc.summary)
-        {
-            // Translate our b64 encoded text into a regular string
-            let text = atob(doc.text);
-            // Create prompt for Algorithem
-            const promptInput: PromptInput = {
-                documentSpeaker: doc.speaker,
-                documentSection: doc.section,
-                documentText: text,
-              };
-            // Generate a summary using our prompt input and get a response
-            const GenSummaryRes = await generateSummary(promptInput);
-
-            if(GenSummaryRes.success) {
-                // We would save the summary here
-            } else {
-                throw createHttpError(500, GenSummaryRes.error);
-            }
-            doc.summary = GenSummaryRes.summary;
+        if (await generateSummaryIfNeeded(doc))  {
+            // Save to database
         }
         
         res.status(200).json(doc);
@@ -106,6 +83,7 @@ export const createSpeech: RequestHandler<unknown, unknown, CreateSpeechBody, un
     const givenSection = req.body.section;
     const givenSummary = req.body.summary;
     const givenURL = req.body.url;
+
     try {
         // Ensure Required fields were provided
         if(!givenTitle) {
@@ -123,8 +101,8 @@ export const createSpeech: RequestHandler<unknown, unknown, CreateSpeechBody, un
         }
 
         // Check for invalid date format
-        if(! moment(givenDate, 'MM-DD-YYYY', true).isValid()) {
-            throw createHttpError(400, "Speech date invalid: Must satisfy MM-DD-YYYY");
+        if(!validateDateString(givenDate.toString())) {
+            throw createHttpError(400, "Speech date invalid: Must satisfy MM-DD-YYYY or YYYY-MM-DD");
         }
 
         // Create the new Speech
@@ -198,10 +176,8 @@ export const updateSpeech: RequestHandler<UpdateSpeechParams, unknown, UpdateSpe
             throw createHttpError(400, "Speech must have a url");
         }
 
-
-        // Check for invalid date format
-        if(! moment(givenDate, 'MM-DD-YYYY', true).isValid()) {
-            throw createHttpError(400, "Speech date invalid: Must satisfy MM-DD-YYYY");
+        if(!validateDateString(givenDate.toString())) {
+            throw createHttpError(400, "Speech date invalid: Must satisfy MM-DD-YYYY or YYYY-MM-DD");
         }
 
         // Find the speech
@@ -218,6 +194,8 @@ export const updateSpeech: RequestHandler<UpdateSpeechParams, unknown, UpdateSpe
         speech.section = givenSection;
         speech.summary = givenSummary;
         speech.url = givenURL;
+
+        await generateSummaryIfNeeded(speech);
 
         // Use mongoose save method, and await response
         const updatedSpeech = await speech.save(); 

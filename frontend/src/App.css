@@ -54,8 +54,14 @@ button:hover {
   background-color: #1f0aa991 !important; 
 } 
 
+.filter-button button {
+  border: 10px;
+  border-radius: 0;
+  transition: background-color 0.25s ease;
+}
+
 .filter-button button:hover {
-  background-color: transparent  !important;
+  background-color: transparent !important;
 }
 
 .filter-button img {
@@ -64,6 +70,24 @@ button:hover {
 
 .filter-button img:hover {
   filter: brightness(0%)
+}
+
+.refresh-button {
+  transition: background-color 0.25s ease;
+  color: rgb(27, 27, 27);
+  margin-left: auto;
+  stroke-width: 2;
+}
+
+.refresh-button button {
+  border: 0px;
+  background-color: transparent !important;
+  padding: 0 0 0 0
+}
+
+.refresh-button:hover {
+  color: rgb(0, 0, 0);
+  stroke-width: 2.25;
 }
 
 span:nth-of-type(1){ 
@@ -114,12 +138,6 @@ span:nth-of-type(2){
 }
 
 .source-button button:hover {
-}
-
-.filter-button button {
-  border: 10px;
-  border-radius: 0;
-  transition: background-color 0.3s ease;
 }
 
 .document-container {
@@ -337,6 +355,7 @@ span:nth-of-type(2){
   font-weight: 300;
   font-size: 20px;
   text-align: left;
+  margin: 0 0 8px 0;
 }
 
 .speech-content{
