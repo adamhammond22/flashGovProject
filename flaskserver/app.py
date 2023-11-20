@@ -7,7 +7,8 @@ import time
 import queue # get a threadsafe queue
 # import our custom summarizer worker
 from summarizer import SummarizerWorkManager
-
+from keywords import KeywordsWorkerManager
+import yake
 
 # Application instance
 app = Flask(__name__)
@@ -16,7 +17,6 @@ app = Flask(__name__)
 queue_maximum_size = 1
 queue_timeout = 2
 wait_in_queue_timeout = 30
-
 
 # ========== Custom Error Handlers ========== #
 @app.errorhandler(400)
@@ -104,8 +104,55 @@ def summary():
         # Throw body error if we were given a bad body.
         abort(400, description="Invalid or missing string field in request body")
 
+@app.route('/keywords', methods=['GET'])
+def keywords():
 
+    try:
+        data_string = request.data.decode('utf-8')
+    except AttributeError as e:
+        abort(400, description="Invalid request body. Expected utf-8")
 
+    
+    if data_string and isinstance(data_string, str):
+        
+        try: 
+
+            wakeThreadEvent = threading.Event()
+
+            text = data_string
+
+            requestData = {
+                'keywords': [],
+                'text': text,
+                'event': wakeThreadEvent
+            }
+            keywords = requestData['keywords']
+            keywordsQueue.put(requestData, timeout=queue_timeout)
+
+        except queue.Full:
+            abort(503, description="Server overloaded: Queue full")
+
+         # ===== Wait for summarization to be returned (BLOCKING) ===== #
+        extractFinished = wakeThreadEvent.wait(wait_in_queue_timeout)
+        
+        # Handle cases of summary not finishing, data not being sent, and summary being empty
+        if(not extractFinished):
+            abort(503, description="Server overloaded: Timed out waiting for keywords")
+
+        elif(not requestData):
+            abort(500, description="Keyword Extraction returned no response")
+    
+        elif (not requestData['keywords']):
+            errorMessage = requestData['error'] if requestData['error'] != '' else "Unknown"
+            abort(500, description=f"Keyword Extraction Failure Error: {errorMessage}")
+
+        return jsonify({'keywords': requestData['keywords']})
+
+    else:
+        # Throw body error if we were given a bad body.
+        abort(400, description="Invalid or missing string field in request body")
+
+    
 # This allows the flask server to be activated by "python app.py" rather than through flask run.
 if (__name__ == '__main__'):
     port = 5002
@@ -117,6 +164,13 @@ if (__name__ == '__main__'):
     sumarizerWorkerManager = SummarizerWorkManager(summaryQueue)
     sumarizerWorkerManager.startWorking()
 
+    # Keywords Queue
+    keywordsQueue = queue.Queue(maxsize=queue_maximum_size)
+
+    # Create Keyword worker manager
+    keywordManager = KeywordsWorkerManager(keywordsQueue)
+    keywordManager.startWorking()
+
     # Once the worker is ready, we'll begin the server (BLOCKING)
     print(f"Starting Flask server on port: {port}")
     app.run(port=port, threaded=True)
@@ -124,3 +178,4 @@ if (__name__ == '__main__'):
     # After CTRL+C is pressed, join the worker thread
     print("Shutting down Flask server...")
     sumarizerWorkerManager.stopWorking()
+    keywordManager.stopWorking()
