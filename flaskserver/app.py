@@ -1,7 +1,6 @@
 # ==================== app.py ==================== #
 # This holds the main application of our flask server
 from flask import Flask, request, jsonify, abort
-import base64
 import threading # to check thread ids
 import time
 import queue # get a threadsafe queue
