@@ -51,8 +51,19 @@ const generateSummary= async (promptInput: PromptInput): Promise<GenSummaryRespo
   let promptString = `Concisely summarize this speech given by ${promptInput.documentSpeaker} in the ${promptInput.documentSection}`+
   `and present the arguments that they make: \"${promptInput.documentText}\"`;
 
-  // Utilize our chosen summary funcationality
-  return generateSummaryFlask(promptString);
+  // Utilize our chosen summary functionality
+  // In this case, try flask then do inference
+  const flaskSummaryRes = await generateSummaryFlask(promptString);
+
+  // Attempt inference summary if failed
+  if (!flaskSummaryRes.success){
+    console.warn("Warning: Flask Server summarization failed.")
+    return generateSummaryInference(promptString);
+  } else {
+    return flaskSummaryRes;
+  }
+
+
 }
 
 
