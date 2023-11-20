@@ -18,8 +18,8 @@ function Document() {
 
     const parseAndSetSpeech = async(resJson:any) => {
         setUnprocessedSpeechInfo(resJson);
-        const dateString = parseAndFormatDate(resJson.date)
-        const decodeText = atob(resJson.text)
+        const dateString = parseAndFormatDate(resJson.date);
+        const decodeText = atob(resJson.text);
         setSpeechInfo({...resJson, date:dateString,text:decodeText});
     }
 
@@ -27,7 +27,6 @@ function Document() {
         try {
             setLoading(true);
             let jsonStr = JSON.stringify({...unprocessedSpeechInfo, summary:undefined});
-            console.log("speechInfo: " + jsonStr);
             const res = await fetch(`/api/speeches/${id}`, {method:"PATCH", headers: {
                 'Content-Type': 'application/json'}, body: jsonStr});
             const resJson = await res.json()

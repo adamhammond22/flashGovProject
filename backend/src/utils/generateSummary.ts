@@ -82,7 +82,7 @@ const generateSummaryIfNeeded = async (speech:any): Promise<boolean> => {
             const GenSummaryRes = await generateSummary(promptInput);
 
             if(GenSummaryRes.success) {
-              speech.summary = GenSummaryRes.summary;
+                speech.summary = GenSummaryRes.summary;
                 return true;
             } else {
                 throw createHttpError(500, GenSummaryRes.error);
