@@ -20,3 +20,7 @@ There are some "large" models that (likely use tricks) in order to get around th
 There are also manual tricks like Hierarchical Summarization: Break the input into digestable chunks, summarise each of those chunks, and then summarize those summarizations. This works but it has issues that must be worked through.
 - 1: You need tricks to take into account the whole document context. For example, when using facebook/bart-large-cnn, my input was divided into 2 chunks, the first captured the context that it was a speaker saying something then the second 
 - 2: Models may get unpredictable if we give them too small of an input. How do we solve this? truncate? cram it into another section? split the second to last chunk up? Again in the facebook/bart-large-cnn example the last input was quite short and the second pass was way worse
+
+
+## Datasets
+- https://paperswithcode.com/dataset/govreport This provides exxactly what we need
