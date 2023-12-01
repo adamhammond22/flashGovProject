@@ -17,7 +17,7 @@ export const getFilteredSpeechInfo: RequestHandler = async (req, res, next)=>{
         let givenSpeaker = req.query.speaker;
         let givenStartDate = req.query.startDate;
         let givenEndDate = req.query.endDate;
-        
+        let keywords = req.query.keywords;
         // Actual Dates used in the query
         let startDate:Date;
         let endDate:Date;

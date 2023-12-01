@@ -50,7 +50,6 @@ def handle_exception(e):
 # POST summary route will generate a summary on the fly provided the server isn't overloaded
 @app.route('/summary', methods=['POST'])
 def summary():
-    
     # Check if the input is JSON json
     try:
         data_string = request.data.decode('utf-8')
@@ -104,9 +103,9 @@ def summary():
         # Throw body error if we were given a bad body.
         abort(400, description="Invalid or missing string field in request body")
 
-@app.route('/keywords', methods=['GET'])
+@app.route('/keywords', methods=['POST'])
 def keywords():
-
+    print(request)
     try:
         data_string = request.data.decode('utf-8')
     except AttributeError as e:

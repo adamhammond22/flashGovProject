@@ -40,7 +40,12 @@ function Documents() {
           paramList.push("endDate=" + endDate);
         if (searchBarText)
           paramList.push("speaker=" + searchBarText);
-        
+        if (keyWords.length > 0){
+          keyWords.forEach((kw:String) => {
+            paramList.push("keywords="+kw);
+          })
+        }
+
         const params = paramList.join("&");
           
         // Able to leave out the localhost/5000 portion because of proxy in package.json

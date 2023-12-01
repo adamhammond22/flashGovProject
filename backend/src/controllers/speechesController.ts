@@ -74,6 +74,31 @@ export const getSingleSpeech: RequestHandler = async (req, res, next) => {
             doc.summary = GenSummaryRes.summary;
         }
         
+        // If there are no keywords, generate
+        if (!doc.keywords){
+
+            // Translate our b64 encoded text into a regular string
+            let text = atob(doc.text);
+
+            // Generate a summary using our prompt input and get a response
+            try{
+                const res = await fetch("http://localhost:5002/keywords",{
+                    method:"POST",
+                    mode: "cors", // cross origin request
+                    credentials: "same-origin", // include, *same-origin, omit
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: text,
+                });
+                doc.keywords = await res.json();
+                await doc.save()
+                console.log(doc.keywords);
+            } catch (err){
+                console.log(err)
+            }            
+        }
+
         res.status(200).json(doc);
 
 

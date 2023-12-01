@@ -44,7 +44,7 @@ class KeywordsWorkerManager():
 # This worker is implemented by the worker manager
 # This worker will run the model asking for summaries 
 
-def summarizerWorkFunction(stopWorkerEvent: threading.Event() , keywordsQueue, extractor):
+def keywordWorker(stopWorkerEvent: threading.Event() , keywordsQueue, extractor):
 
     while (not stopWorkerEvent.is_set()):
         
@@ -55,7 +55,8 @@ def summarizerWorkFunction(stopWorkerEvent: threading.Event() , keywordsQueue, e
             
             
             # ===== Actual summary goes here, this is a placeholder ===== #
-            item['keywords']= extractor(item['text'])
+            keywords = list(map(lambda w: w[0],extractor.extract_keywords(item['text'])))
+            item['keywords'] = keywords
             time.sleep(1)
             # ===== Actual summary goes here, this is a placeholder  ===== #
             

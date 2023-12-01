@@ -10,7 +10,8 @@ const speechSchema = new Schema({
     speaker: {type: String, required: true},
     section: {type: String, required: true},
     url: {type: String, required: true},
-    summary: {type: String}
+    summary: {type: String},
+    keywords: {type: [String]}
 },
 {
     timestamps:true,
