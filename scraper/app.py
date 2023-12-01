@@ -14,6 +14,37 @@ API_KEY = "VKTUleNWTfZhIKxMmTuYSiPt58qMSOIrkgupnXOA"
 OFFSET_CACHE_FILE = "OffsetMarkCache"
 MEMBERS_CACHE_FILE = "members.json"
 
+BLOCKED_TITLE_SUBSTRINGS = [
+    #"NOTICE OF",
+    #"Introductory Statement",
+    #"ORDER FOR",
+    "RESOLUTIONS SUBMITTED TODAY",
+]
+
+BLOCKED_DOC_TYPES = [
+    "PRAYER",
+    "PLEDGE",
+    "ADJOURNMENT",
+    "SORDERFOR",
+    "SMEASUREDCAL",
+    "SWITHDRAWAL",
+    "SCLOTURE",
+    "SLEGISLATIVE",
+    "HTIMELIMIT",
+    "HJOURNAL",
+    "SCALENDAR",
+    "SAMENDMENTTEXT",
+    "SAMENDMENTTEXTIND",
+    "SSUBMITTED",
+    "SSUBMISSION", 
+    "HSPECIALORDERSG",
+    "HSPECIALORDERS",
+    "SRESOLUTION",
+    "SEXECCAL",
+    "SAUTHORITY",
+    #"DDSCMEETINGS", not necessary to be blocked, never has a speaker 
+]
+
 app = Flask(__name__)
 
 @app.route('/summary')
@@ -71,9 +102,30 @@ def PerformSearch():
         isFirst = False
     print(f"members query: {membersQuery}")
     '''
+    query = "collection:(CREC) and mods:congMember:@role:speaking and section:(house or senate)"
+    if len(BLOCKED_DOC_TYPES) > 0:
+        blockedTypes = ""
+        for index, typeStr in enumerate(BLOCKED_DOC_TYPES):
+            blockedTypes += typeStr
+            if (index != len(BLOCKED_DOC_TYPES) - 1):
+                blockedTypes += " or "
+        query += f" and -crtype:({blockedTypes})"
+        print(f"blocked types: {blockedTypes}")
+    
+    if len(BLOCKED_TITLE_SUBSTRINGS) > 0:
+        blockedTitles = ""
+        for index, blockedStr in enumerate(BLOCKED_TITLE_SUBSTRINGS):
+            blockedTitles += f"\"{blockedStr}\""
+            if (index != len(BLOCKED_TITLE_SUBSTRINGS) - 1):
+                blockedTitles += " or "
+        #query += f" and title:-({blockedTitles})"
+        print(f"blocked titles: {blockedTitles}")
+    
+    print(f"query: {query}")
     jsonObj = {
-        "query": f"collection:(CREC) and mods:congMember:@role:speaking and section:(house or senate) and title:not(\"Text of\" or \"NOTICE OF\" or \"Introductory Statement\" or \"ORDER FOR\" or \"RESOLUTIONS SUBMITTED TODAY\")",
-        "pageSize": 1,
+        "query": query,
+            #f"collection:(CREC) and mods:congMember:@role:speaking and section:(house or senate) and -crtype:({blockedTypes}) and -title:({blockedTitles})",
+        "pageSize": 30,
         "offsetMark": offsetMark,
         "sorts": [
             {
@@ -83,15 +135,16 @@ def PerformSearch():
         ],
     }
     r = requests.post(f"https://api.govinfo.gov/search?api_key={API_KEY}", json=jsonObj)
-    print(r.content)
     if (r.status_code != 200):
         print(f"failed, error: {r.status_code}")
         return
     data = r.json()
     results = data["results"]
 
-    WriteToOffsetCache(data["offsetMark"])
     if (len(results) > 0):
+        for result in results:
+            print(f"result: {result}\n")
+        WriteToOffsetCache(data["offsetMark"])
         pass
         #text = read_from_htm(results[0]["download"]["txtLink"])
         #print(f"text: {text}")    
