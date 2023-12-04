@@ -10,20 +10,6 @@ import {validateDateString} from "../utils/validateDate";
 
 // ============================== All Middleware ============================== //
 
-// ========== Get All Speech Middleware ========== //
-// Not in use atm
-// export const getAllSpeeches: RequestHandler = async (req, res, next)=>{
-
-//     try {
-//         // Find all speechs and return
-
-//         const speeches = await SpeechModel.find().exec();
-//         res.status(200).json(speeches);        
-
-//     } catch (error) {
-//         next(error);
-//     }
-// };
 
 // ========== Get Single Speech (by id) ========== //
 export const getSingleSpeech: RequestHandler = async (req, res, next) => {
@@ -48,10 +34,17 @@ export const getSingleSpeech: RequestHandler = async (req, res, next) => {
 
         // If there is no summary, generate one
         if (await generateSummaryIfNeeded(doc))  {
-            // Save to database
+            res.status(200).json(doc);
+            // Save it
+            await doc.save()
+
+
+        } else{
+            res.status(200).json(doc);
+            console.log("or here?")
         }
         
-        res.status(200).json(doc);
+        
 
 
     } catch (error) {
