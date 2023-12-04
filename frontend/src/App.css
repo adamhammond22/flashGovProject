@@ -33,6 +33,23 @@ button {
   transition: 0.2s ease-in-out;
 }
 
+button.sort {
+  border: 1px solid var(--border-gray);
+  border-radius: 10px;
+  margin-left: 20px;
+}
+
+.descending {
+  transform: rotate(0deg);
+}
+.ascending{
+  transform: rotate(180deg);
+}
+.descending,
+.ascending {
+  transition: 500ms ease-in-out;
+}
+
 /*Used to wrap main content of page and vertically center any child of wrapper*/
 .wrapper > * {
   display: flex;

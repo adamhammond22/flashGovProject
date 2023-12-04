@@ -14,6 +14,7 @@ function Documents() {
     const [currentWord,setWord] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+    const [order, setOrder] = useState(0); //Use 0 for most recent to least recent, 1 for reverse
 
     // Set true while the search is being performed and false once the search is finished
     const [searchingState, setSearchingState] = useState(false);
@@ -46,6 +47,8 @@ function Documents() {
         // Able to leave out the localhost/5000 portion because of proxy in package.json
         const response = await fetch("/api/speeches?" + params, {method:"GET"});
         const returnedSpeeches = await response.json();
+        returnedSpeeches.sort((a:{date:String,section:String,speaker:String,title:String,_id:String},
+           b:{date:String,section:String,speaker:String,title:String,_id:String}) => a.date > b.date ? -1 : a.date > b.date ? 1 : 0)
         setSpeeches(returnedSpeeches);
       } catch (error) {
         console.error(error);
@@ -99,6 +102,11 @@ function Documents() {
       setSearchBarText(e.target.value);
     }
 
+    const toggleSortCallback = () => {
+      setOrder(order === 1 ? 0: 1);
+      setSpeeches(speeches.reverse());
+    }
+
     return (
       <div className='documents'>
         <SearchBar toggleFilter={toggleFilterCallback} onSearchBarChanged={onSearchBarChanged} searchCallback={performSearch} searchingState={searchingState} />
@@ -110,7 +118,7 @@ function Documents() {
             toggleSpecDate={toggleSpecDateCallback} setWord={setCurrentWordCallback} 
             currentWord={currentWord} removeItem={removeWordCallback}
             setStartDate={setStartDateCallback} setEndDate={setEndDateCallback}
-            startDate={startDate} endDate={endDate} 
+            startDate={startDate} endDate={endDate} toggleSort={toggleSortCallback} order={order}
             />          
         }
 

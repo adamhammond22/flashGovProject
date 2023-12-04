@@ -1,6 +1,8 @@
+import sort from "../assets/sort.png";
+
 function FilterPanel(props:{specDate:boolean,toggleFilter:any,toggleSpecDate:any,
     addKeyword:any,keywords:string[],currentWord:string,setWord:any,removeItem:any
-    setStartDate:any,setEndDate:any,startDate:string,endDate:string}) {
+    setStartDate:any,setEndDate:any,startDate:string,endDate:string,toggleSort:any, order: Number}) {
     return (
         <div className='filter-panel-overlay'>
             {/* filter-panel is the main filter screen users interact with */}
@@ -17,6 +19,8 @@ function FilterPanel(props:{specDate:boolean,toggleFilter:any,toggleSpecDate:any
                 <div className='checkbox-container'>
                   <input checked={props.specDate} onChange={props.toggleSpecDate} type='checkbox'/>
                   <p>On Specific Date</p>
+                  <button onClick={props.toggleSort} className="sort"><img className={props.order ? "ascending" : "descending"} src={sort} alt=""/></button>
+                  <p>{props.order ? "Sorted Ascending" : "Sorted Descending"}</p>
                 </div>
                 <div className='range-inputs'>
                   <div>
