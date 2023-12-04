@@ -47,10 +47,9 @@ type PipelineQueryResponse = PipelineQueryItem[];
 // This is the only exported function. It will generate a summary for the endpoint, how it's done is up to this function.
 // The endpoint should not care how it's done, this function will conditionally call it's helpers to worry about this
 const generateSummary= async (promptInput: PromptInput): Promise<GenSummaryResponse> => {
-
-  let promptString = `Concisely summarize this speech given by ${promptInput.speechSpeaker} in the ${promptInput.speechSection}`+
-  `and present the arguments that they make: \"${promptInput.speechText}\"`;
-
+  //let promptString = `Concisely summarize this speech given by ${promptInput.speechSpeaker} in the ${promptInput.speechSection}`+
+  //` and present the arguments that they make: \"${promptInput.speechText}\"`;
+  let promptString = promptInput.speechText
   // Utilize our chosen summary functionality
   // In this case, try flask then do inference
   const flaskSummaryRes = await generateSummaryFlask(promptString);

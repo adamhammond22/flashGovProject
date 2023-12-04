@@ -284,6 +284,9 @@ def main():
             if (membersList is None):
                 print(f"Warning: Document is missing members list: {granuleId}")
                 continue
+
+            if (len(membersList) > 1):
+                continue
             speaker = membersList[0]["memberName"]
             speakerLastName = speaker.split(',')[0]
             

@@ -122,3 +122,5 @@ returns a list of docs which can be used to access the text
     - Documents are full of \n's to make them fit in more of a thin column shape.
     - Many documents seem to have several separate speeches by the same individuals in them for some reason. The different speeches seem to be separated by 3 \n's. 
     - Often timestamps are inserted into the documents, usually with 3 \n's, a lot of spaces to center, then something like "{time} xxxx" (where the x's are numbers), followed by \n\n.
+- Issues:
+    - If speakers have the same last name, they will be referenced as "Mr/Ms. {name} of {state}."  
