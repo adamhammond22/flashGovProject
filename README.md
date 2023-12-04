@@ -117,3 +117,8 @@ returns a list of docs which can be used to access the text
     - https://www.govinfo.gov/help/finding-info
 - Helpful api info:
     - https://api.data.gov/docs/developer-manual/
+- Notes about document formatting:
+    - Official document titles appear to be separated from the top of the document by 5 \n's, followed by a number of spaces (so as to center the title) and then the title itself. 
+    - Documents are full of \n's to make them fit in more of a thin column shape.
+    - Many documents seem to have several separate speeches by the same individuals in them for some reason. The different speeches seem to be separated by 3 \n's. 
+    - Often timestamps are inserted into the documents, usually with 3 \n's, a lot of spaces to center, then something like "{time} xxxx" (where the x's are numbers), followed by \n\n.
