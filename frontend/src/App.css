@@ -167,11 +167,21 @@ span:nth-of-type(2){
 .document-card > * {
   margin: 0 20px;
 }
-.document-card > p {
+.card-speaker-title{
   flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.card-speaker-title h1 {
   text-align: left;
   font-size: 20px;
   font-weight: 600;
+  flex: 1;
+}
+.card-speaker-title p {
+  text-align: left;
+  font-size: 17px;
+  margin-bottom: 0;
 }
 
 .date-view-container{
