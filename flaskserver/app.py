@@ -50,6 +50,12 @@ def handle_exception(e):
 # POST summary route will generate a summary on the fly provided the server isn't overloaded
 @app.route('/summary', methods=['POST'])
 def summary():
+    
+    # ===== ALWAYS THROW ERROR ===== #
+    abort(501, description="Local ML Not Implemented")
+    # ===== LOCAL ML NOT COMPLETE ===== #
+    
+    
     # Check if the input is JSON json
     try:
         data_string = request.data.decode('utf-8')
