@@ -76,7 +76,7 @@ Pros:
 - Been capable of understanding who is speaking and will write summarizations which summarize one's arguments but don't state them as fact
 Cons:
 - Rate limited
-
+- Will not properly summarize longer documents (likely just truncating the input)
 
 Transformers.js is a huggingface transformer model package. With this we can simply import pretrained huggingface models and run them on our server.
 

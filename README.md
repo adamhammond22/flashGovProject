@@ -1,106 +1,90 @@
 # flashGovProject
 
-### Learning Notes
+This project serves up government documents: providing filtering, keywords, and summaries.
+It's intended to prototype scraping and summarization functionality within their tech stack.
 
-Typescript:
-We always edit our .ts files. We can convert them to js with "npx tsc" which executes the transpiler.
-From here we can run "node <file.js>"
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+- [State Of The Project](#State Of The Project)
+- [API Documentation](#api-documentation)
+- [Contributing](#contributing)
 
+## Getting Started
 
-## Hierarchy:
-We leave .ts in our source
-Generated code will go in ./dist as specified by the tsconfig setup
+## Prerequisites
+Make sure you have the following installed on your machine:
+- Node.js
+- npm
+- anaconda
 
-### Backend:
-Routes Directory contains endpoint "routes" for each schema
-Models Directory contains the logic for each schema
+## Installation
 
-## Packages / Tools:
-
-Nodemon:
-Used to auto-restart the node application when file changes are needed
-using ts-node to transpile from typescript
-
-Starting from the backend:
-"npx nodemon src/primaryServer.ts" or "npm start"
-executed nodemon on our typescript server. This will keep the server running & automatically re-compile it upon a saved change.
-"npm start" does this, it's a script specified in package.json
-
-ESLint:
-Eslint is a very popular formatting tool. It will help us conform to a coding standard, as well as find problems.
-There will be an eslint config for each side of the codebase.
-Let's say I wanna check all .ts in my local directory:
-"npx eslint . --ext .ts" or "npm run lint"
-NOTE: I suspect eslint is broken here. The VSCode eslint is producing correct errors, but the lint commands only detect unused variables. They don't even detect undefined variables.
-
-Express:
-Used to create endpoints for our servers.
-"Middleware" = any piece of code that knows how to handle a request
-"Next()" passes the request on to the next piece of middleware
-
-Morgan:
-Logging tool for our server
-
-HTTP-errors:
-Package for creating easy http errors
-
-
-### Summarization:
-We can either do summarization locally or with an API. I think we can try out both.
-
-## Local:
-This method would entail traiining our own model and then using it on the server in order to generate predictions.
-There are tutorials to summarize legal documents: "https://www.youtube.com/watch?v=tc87-ZKWm78"
-
-This is a tutorial for using transformers on node.js: https://huggingface.co/docs/transformers.js/tutorials/node 
+#### Frontend
+- "npm install"
+#### Backend
+- "npm install"
+#### flaskserver
+- "conda env create -f environment.yml"
+- "conda activate FlashGov_ML_Server"
+- "cd your_path_here/flaskserver"
 
 
 
-Pros:
-- No rate limits
-- Likely comparable speed (compared to free tiers) this needs to be validated though
-- Likely better  ov
-Cons:
-- More time spent fine tuning the model
-- Figuring out how to do python to JS, or figuring out how to do this in JS
-- Remote server could be very slow running on poor-hardware devices
+## Usage
 
-## Remote:
-The huggingface API:
-Pros:
-- Superior summarizations to any of the other generic local models we've tried
-- Decently fast
-- Been capable of understanding who is speaking and will write summarizations which summarize one's arguments but don't state them as fact
-Cons:
-- Rate limited
+#### Frontend
+The frontend will show up on your local browser, and lets you interact with the UI of the project.
+While in the frontend folder type:
+- "npm start"
+#### Backend
+The backend will begin the primary server, which will interface with the database and frontend to serve up summaries.
+While in the backend folder type:
+- "npm start"
+#### flaskserver
+The flask server is intended to locally run a summarization ML model, for the backend to query.
+This is optional, because it is not in a finished state.
+While in the flaskserver folder in an Anaconda window, type:
+- "python app.py"
 
 
-Transformers.js is a huggingface transformer model package. With this we can simply import pretrained huggingface models and run them on our server.
+## State Of The Project
+Here we're discussing the state of the project, and what goals we've accomplished, and failed to finish.
 
-## Models We've Tried:
- - Bert (Local): very very innaccurate, likely needs finetuning
- - gpt2 (Inference): a bit better, not amazing
- - facebook/bart-large-cnn (Inference): decent AND FAST
+### Framework
+- Working MongoDB cluster to house our documents
+- Reasonably robust server and api
+- Functioning frontend
 
-## Model Prompt Notes:
-- Specifying in the prompt that the model should present the argument they make as an argument rather than as fact was effective.
+### Flask Server / Local ML Server / Summarization Model
+- We query the Local ML server first, and use the Huggingface Inference API as a fallback. 
+- Local ML server is reasonably robust, properly receives requests, and dispatches a worker to run th ML model on the document.
+- The ML model is not complete, and thus the server will raise a 501 "Not implemented" error, and the Primary Server will default to the other API
 
-## Flask Server Setup
+### Backend / Primary Server
+- Serves up smaller "document info" objects, as well as full documents and summaries upon request
+- When serving full documents, it will generate a summary on-the-fly, and save it to the DB after responding to the client
+- Primary server queries the Local ML server first, and failing that will query the Huggingface Inference API
+- Also allows updating
 
-Install anaconda for python.
+### Front End / UI
+- Displays all documents with speaker names and dates
+- Keyword and date filtering is available
+- Can examine individual documents, with a summary being displayed first
 
-Then create the environment we're using for the server with:
- - conda env create -f environment.yml
 
-Activate the environment using
- - conda activate FlashGov_ML_Server
+## API Documentation
 
-If theres download issues, try updating the channels
-- conda install -c pytorch pytorch torchvision torchaudio OR conda update --all
+### Primary Server:
+GET "localhost:5000/api/speeches"
+- queries for all document views
 
-You can also update packages this way but be careful: this may add packages you dont use!
-- update packages: conda env update -f environment.yml
+GET "localhost:5000/api/speeches/<speech-id>"
+- gets entire speech including summary
+- will generate a summary if there is not one
 
+<<<<<<< Updated upstream
 # Scraper Notes:
 - Rather than using congress.gov, we can use govinfo.gov's api, which can allow us to access specific speeches made by congress members. 
 - https://api.govinfo.gov/docs/
@@ -124,3 +108,24 @@ returns a list of docs which can be used to access the text
     - Often timestamps are inserted into the documents, usually with 3 \n's, a lot of spaces to center, then something like "{time} xxxx" (where the x's are numbers), followed by \n\n.
 - Issues:
     - If speakers have the same last name, they will be referenced as "Mr/Ms. {name} of {state}."  
+=======
+POST "localhost:5000/api/speeches"
+- Will create a speech
+
+PATCH "localhost:5000/api/speeches/<speech-id>"
+- Will regenerate and save a speech
+
+DELETE "localhost:5000/api/speeches/<speech-id>"
+- Deletes the document
+
+### Flask Server:
+
+GET "localhost:5002/summary"
+- generates a summary if possible
+- will reject the host if overloaded
+
+## Contributors
+Adam Hammond
+Harrison Saunders
+Jonathan Nguyen
+>>>>>>> Stashed changes
